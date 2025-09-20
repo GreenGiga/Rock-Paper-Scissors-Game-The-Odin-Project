@@ -1,157 +1,158 @@
-//alert("Heads up PlayerOne, you've got 10 rounds of gameplay per session! \n Rule: To win, you need to score at least 5.")
+console.log("Fire! Chai");
 
-let compScore = 0;
+//Logic for game 
+//scoreboard: Human score ----- Computer score
+//Choice boaard: You chose ----- Computer chose
+//Result board: (xyz) won! ___ beats ___.
+//Increments score value of round winner
+//After five rounds, a winner (or draw) is declared 
+//Then DOM is used to attach the play functions to html buttons
+//And console logs are displayed in the html page.
+
+//scoreboard
 let humanScore = 0;
+let compScore = 0;
 
-console.log(`Computer score = ${compScore} || Your score = ${humanScore}`);
-
-let humanInput = "";
-function playRound() {
-function getRandomInt() {
-    return Math.floor(Math.random() * 9);
-}
-
+//choice board;
+let humanChoice;
 let compChoice;
-if (getRandomInt() == 0 || getRandomInt() == 4 || getRandomInt() == 7) {
-    compChoice = "paper";
-} else if (getRandomInt() == 1 || getRandomInt() == 3 || getRandomInt() == 5) {
-    compChoice = "scissors";
-} else {
-    compChoice = "rock";
-}
 
-let humanChoice = humanInput.toLowerCase();
+//round result annunciation
+let roundResult;
 
-console.log(`You chose: ${humanChoice}; Computer chose: ${compChoice}`);
-
-//block code to evaluate which player wins a round
-
-if (compChoice == "rock" && humanChoice == "scissors") {
-    console.log("Computer won: Rock beats Scissors");
-    compScore++;
-} else if (compChoice == "rock" && humanChoice == "paper") {
-    console.log("You won: Paper beats Rock");
-    humanScore++;
-} else if (compChoice == "rock" && humanChoice == "rock") {
-    console.log("That was a draw: You both picked rock");
-} else if (compChoice == "paper" && humanChoice == "scissors") {
-    console.log("You won: Scissors beats Paper");
-    humanScore++;
-} else if (compChoice == "paper" && humanChoice == "rock") {
-    console.log("Computer won: Paper beats Rock");
-    compScore++;
-} else if (compChoice == "paper" && humanChoice == "paper") {
-    console.log("That was a draw: You both picked Paper");
-} else if (compChoice == "scissors" && humanChoice == "rock") {
-    console.log("You won: Rock beats Scissors");
-    humanScore++;
-} else if (compChoice == "scissors" && humanChoice == "paper") {
-    console.log("Computer won: Scissors beats Paper");
-    compScore++;
-} else if (compChoice == "scissors" && humanChoice == "scissors") {
-    console.log("That was a draw: You both picked Scissors");
-} else {
-    console.log("Your inout wasn't recognised, please choose either Rock, Paper or Scissors");
-}
-
-console.log(`Computer score = ${compScore} || Your score = ${humanScore}`);
-scoreBar.textContent = `Computer = ${compScore}: Human = ${humanScore}`;
-
-choiceBar.textContent = `You chose: ${humanChoice}; Computer chose: ${compChoice}`;
-button.insertBefore(choiceBar, scoreBar);
-
-if (compScore === 5 || humanScore === 5) {
-    endOfRound();
-    const sessionButton = document.createElement("button");
-    sessionButton.textContent = "Start another session";
-    button.appendChild(sessionButton)
-    sessionButton.addEventListener("click", () => {
-        startRound();
-
-        function startRound() {
-            rockButton.disabled = false;
-            paperButton.disabled = false;
-            scissorsButton.disabled = false;
-            scoreBar.textContent = "Computer = 0: Human = 0";
-            button.removeChild(choiceBar);
-            compScore = 0;
-            humanScore = 0;
-            button.removeChild(sessionButton);
-        };
-        
-    })
-} else {
-   
+//to feed human choice from buttonclicks
+function human(choice) {
+    humanChoice = choice;
 };
 
 
-/*let winnerText;
-function winner() {
-    if (compScore) {
-        winnerText = `Computer won! Computer chose ${compChoice}; You chose ${humanChoice}`;
-    } else if (humanScore++) {
-        winnerText = `You won! Computer chose ${compChoice}; You chose ${humanChoice}`;
+
+function playRound() {
+//-----To get computer's choice:    
+    let compNum = Math.floor((Math.random() * 5) + 1);
+    if(compNum == 1 || compNum == 3) {
+        compChoice = "ROCK";
+    } else if(compNum == 2 || compNum == 4) {
+        compChoice = "PAPER";
     } else {
-        winnerText = `It's a draw. Computer chose ${compChoice}; You chose ${humanChoice}`;
+        compChoice = "SCISSORS";
+    };
+
+//-----To evaluate, declare and increment score for the winner of a round:
+    if(humanChoice == compChoice) {
+        roundResult = "It's a draw";
+    } else if(humanChoice == "ROCK" && compChoice == "PAPER") {
+        roundResult = "Computer won!";
+        compScore++;
+    } else if(humanChoice == "ROCK" && compChoice == "SCISSORS") {
+        roundResult = "You won!";
+        humanScore++;
+    } else if(humanChoice == "PAPER" && compChoice == "ROCK") {
+        roundResult = "You won!";
+        humanScore++;
+    } else if(humanChoice == "PAPER" && compChoice == "SCISSORS") {
+        roundResult = "Computer won!";
+        compScore++;
+    } else if(humanChoice == "SCISSORS" && compChoice == "ROCK") {
+        roundResult = "Computer won!";
+        compScore++;
+    } else if(humanChoice == "SCISSORS" && compChoice == "PAPER") {
+        roundResult = "You won!";
+        humanScore++;
+    } else {
+        roundResult = "Unaccounted operation!!";
+    };
+
+
+//score display:
+    const scoreDisplay = document.querySelector(".score");
+    scoreDisplay.textContent = `Your score = ${humanScore}: Computer score = ${compScore}`;
+
+//choice display:
+    const choicePanel = document.querySelector(".choice");
+    choicePanel.textContent = `You chose ${humanChoice}: Computer chose ${compChoice}`;
+
+//result display:
+    const resultDisplay = document.querySelector(".result");
+    resultDisplay.textContent = roundResult;
+
+//to end session after a player scores 5:
+    if(humanScore == 5 || compScore == 5) {
+        for(button of buttons) {
+            button.disabled = true;
+            button.style.backgroundColor = "rgb(0 120 30)";
+            button.style.color = "rgb(120 120 120)";
+        }
+        if(humanScore > compScore) {
+            alert(`You won this session! You: ${humanScore}; computer: ${compScore}.`);
+        } else {
+            alert(`Computer won this session! Computer: ${compScore}; you: ${humanScore}`);
+        }
+        reset();
     }
 }
-winner();
-const winnerBar = document.createElement("p");
-winnerBar.textContent = winnerText;
-button.insertBefore(winnerBar, scoreBar);
-*/
-}
 
-
-
-if (compScore > humanScore) {
-    alert("You lose this session to a COMPUTER! shame!")
-} else if (compScore < humanScore && humanScore > 4) {
-    alert("You won sha, thank God for ya life...")
-} else {
-    //alert("Seems this session is a draw, either you had less than five or had same score as computer")
-}
-
-// creating html with javascript
-
-const button = document.querySelector("#buttons");
+//DOM MANIPULATION: BUTTONS
+//rock button:
+const container = document.querySelector(".container");
+const buttonBox = document.querySelector(".buttons");
 const rockButton = document.createElement("button");
-const paperButton = document.createElement("button");
-const scissorsButton = document.createElement("button");
-
-rockButton.textContent = "Rock";
-paperButton.textContent = "Paper"
-scissorsButton.textContent = "Scissors"
-button.appendChild(rockButton);
-button.appendChild(paperButton);
-button.appendChild(scissorsButton);
-
-console.log(compScore);
-
-const scoreBar = document.createElement("p");
-scoreBar.textContent = `Computer = 0: Human = ${humanScore}`;
-button.insertBefore(scoreBar, rockButton);
-
-const choiceBar = document.createElement("p");
-
+rockButton.textContent = "ROCK";
+buttonBox.appendChild(rockButton); 
 rockButton.addEventListener("click", () => {
-    humanInput = "rock";
+    human("ROCK");
     playRound();
 });
+
+//paper button:
+const paperButton = document.createElement("button");
+paperButton.textContent = "PAPER";
+buttonBox.appendChild(paperButton); 
 paperButton.addEventListener("click", () => {
-    humanInput = "paper";
-    playRound();
-}
-);
-scissorsButton.addEventListener("click", () => {
-    humanInput = "scissors";
+    human("PAPER");
     playRound();
 });
 
-function endOfRound() {
-    rockButton.disabled = true;
-    paperButton.disabled = true;
-    scissorsButton.disabled = true;
+//scissors button:
+const scissorsButton = document.createElement("button");
+scissorsButton.textContent = "SCISSORS";
+buttonBox.appendChild(scissorsButton); 
+scissorsButton.addEventListener("click", () => {
+    human("SCISSORS");
+    playRound();
+});
+
+
+//session timer (a session lasts until a player's score reaches 5):
+
+
+//DOM MANIPULATION: STYLES
+//center the page content:
+const theBody = document.querySelector(".thebody");
+theBody.style.cssText = "text-align: center; background: black; height: 100vh; padding: 1vh 5vw;";
+
+//style the h1:
+const header = document.querySelector("h1");
+header.style.cssText = "border: 4px solid rgb(0 255 0); background: black; color: white; display: flex; align-items: center; justify-content: center; height: 20vh;";
+
+//style the container
+container.style.cssText = "background: rgb(255 0 0); border: 4px solid rgb(120 120 120); color: white; font-weight: 600; padding: 3vh;";
+
+//style the buttons:
+const buttons = document.querySelectorAll("button");
+for(button of buttons) {
+    button.style.cssText = "display: inline-block; background: rgb(0 255 0); width: 15vw; height: 12vh; margin: 9vh 2vw; color: white; font-weight: 800;";
+
 }
 
+//style the reset button:
+const resetButton = document.querySelector(".reset");
+function reset() {
+    resetButton.textContent = "NEW GAME?"
+    resetButton.style.cssText = " display: flex; align-items: center; justify-content: center; width: 50vw; background: rgb(0 255 0); color: rgb(50 100 50); font-weight: 800; margin: auto;"
+}
 
+//to reload page on click
+resetButton.addEventListener("click", () => {
+    location.reload();
+})
